@@ -1,0 +1,171 @@
+/*
+ * Copyright 2018, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package com.example.android.marsrealestate.overview
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.lifecycle.Transformations
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.example.android.marsrealestate.R
+import com.example.android.marsrealestate.databinding.GridViewItemBinding
+import com.example.android.marsrealestate.network.MarsProperty
+import java.text.DecimalFormat
+import android.app.Application
+
+/**
+ * This class implements a [RecyclerView] [ListAdapter] which uses Data Binding to present [List]
+ * data, including computing diffs between lists.
+ * @param onClick a lambda that takes the
+ */
+class PhotoGridAdapter( val onClickListener: OnClickListener ) :
+        ListAdapter<MarsProperty, PhotoGridAdapter.MarsPropertyViewHolder>(DiffCallback) {
+    /**
+     * The MarsPropertyViewHolder constructor takes the binding variable from the associated
+     * GridViewItem, which nicely gives it access to the full [MarsProperty] information.
+     */
+    class MarsPropertyViewHolder(private var binding: GridViewItemBinding):
+            RecyclerView.ViewHolder(binding.root) {
+
+        //private var mDecimalFormat = DecimalFormat("#,###")
+
+        fun bind(marsProperty: MarsProperty) {
+
+/*
+            if (marsProperty.type == "buy") {
+                marsProperty.type = "For Sale"
+
+//                var kl = marsProperty.price.toBigDecimal().toString()
+//                var kl = marsProperty.price.toString()
+//
+//var s ="#,###".format(kl)
+//var po = String.format("%,0f",marsProperty.price)
+//var pp = s.toDouble()
+ //               marsProperty.price = po.toDouble()//kl.toDouble() //s.toDouble()
+
+
+//                var oe = marsProperty.price
+//                val number = java.lang.Double.valueOf(oe)
+//                val dec = DecimalFormat("#,###")
+//                val credits = dec.format(number)
+//                marsProperty.price = dec.toString().toDouble()
+
+                //marsProperty.price = DecimalFormat(oe,"#,###").
+                 //       marsProperty.price
+
+                // marsProperty.price = R.string.display_price.toDouble()
+
+            } else if (marsProperty.type == "rent") {
+                marsProperty.type = "For Rent"
+
+
+//                var ss=marsProperty.price.toFloat()
+//                marsProperty.price = "%2.0f".format(ss).toDouble()
+//
+                        //ss.toDouble()
+//                var qualityString = resources.getString(R.string.three_ok)
+//                when (quality) {
+//                    -1 -> qualityString = "--"
+//                    0 -> qualityString = resources.getString(R.string.zero_very_bad)
+//                    1 -> qualityString = resources.getString(R.string.one_poor)
+//                    2 -> qualityString = resources.getString(R.string.two_soso)
+//                    4 -> qualityString = resources.getString(R.string.four_pretty_good)
+//                    5 -> qualityString = resources.getString(R.string.five_excellent)
+//                }
+//                return qualityString
+//
+                //marsProperty.getString(
+                                ///// marsProperty.price = R.string.display_price_monthly_rental.toDouble()
+
+
+
+                //val s = "%,.0f".format(marsProperty.price).toDouble()
+
+                //marsProperty.price = s
+
+//                 marsProperty.price = R.string.display_price_monthly_rental.toDouble()
+//                val displayPropertyPrice2 =  R.string.display_price_monthly_rental
+//                marsProperty.price = displayPropertyPrice2.toDouble()
+
+
+
+
+                // var kk = marsProperty.price
+                // marsProperty.price = mDecimalFormat.format(kk).toDouble()
+
+
+                //String.format("%.3f", marsProperty.price).toDouble()
+                //marsProperty.price = String.format("%,.0f", marsProperty.price).toDouble()
+            }
+            
+ */
+
+
+            binding.property = marsProperty
+            // This is important, because it forces the data binding to execute immediately,
+            // which allows the RecyclerView to make the correct view size measurements
+            binding.executePendingBindings()
+        }
+
+
+
+    }
+
+    /**
+     * Allows the RecyclerView to determine which items have changed when the [List] of [MarsProperty]
+     * has been updated.
+     */
+    companion object DiffCallback : DiffUtil.ItemCallback<MarsProperty>() {
+        override fun areItemsTheSame(oldItem: MarsProperty, newItem: MarsProperty): Boolean {
+            return oldItem === newItem
+        }
+
+        override fun areContentsTheSame(oldItem: MarsProperty, newItem: MarsProperty): Boolean {
+            return oldItem.id == newItem.id
+        }
+    }
+
+    /**
+     * Create new [RecyclerView] item views (invoked by the layout manager)
+     */
+    override fun onCreateViewHolder(parent: ViewGroup,
+                                    viewType: Int): MarsPropertyViewHolder {
+        return MarsPropertyViewHolder(GridViewItemBinding.inflate(LayoutInflater.from(parent.context)))
+    }
+
+    /**
+     * Replaces the contents of a view (invoked by the layout manager)
+     */
+    override fun onBindViewHolder(holder: MarsPropertyViewHolder, position: Int) {
+        val marsProperty = getItem(position)
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(marsProperty)
+        }
+        holder.bind(marsProperty)
+    }
+
+    /**
+     * Custom listener that handles clicks on [RecyclerView] items.  Passes the [MarsProperty]
+     * associated with the current item to the [onClick] function.
+     * @param clickListener lambda that will be called with the current [MarsProperty]
+     */
+    class OnClickListener(val clickListener: (marsProperty:MarsProperty) -> Unit) {
+        fun onClick(marsProperty:MarsProperty) = clickListener(marsProperty)
+    }
+}
